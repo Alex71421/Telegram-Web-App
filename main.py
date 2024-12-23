@@ -1,16 +1,26 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import asyncio
+from aiogram import Bot, Dispatcher
+from app.scheduler import start_scheduler
+from app.handlers import register_handlers
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Инициализация бота и диспетчера
+bot = Bot(token='7962799405:AAGcDE7uCs01J37cMgO1BA6nIWpwW-86bag')
+dp = Dispatcher()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+# Главная асинхронная функция
+async def main():
+    print("Бот запущен...")
+    start_scheduler()
+    register_handlers(dp, bot)
+    try:
+        await dp.start_polling(bot)  # Запуск опроса Telegram
+    finally:
+        await bot.session.close()  # Закрываем сессию бота при завершении
+
+
+# Запуск бота через asyncio
+if __name__ == "__main__":
+    asyncio.run(main())
